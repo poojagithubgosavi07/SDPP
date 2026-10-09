@@ -1,71 +1,58 @@
 pipeline {
+    agent any
 
+    environment { 
+        CI = 'true' 
+    }
 
-agent any
+    stages{
+        stage("Checkout Code"){
+            steps{
+                checkout scm //git "github-repository-url"
+            }
+        }
 
+        stage("Install Dependencies"){
+            steps{
+                //sh "npm install"
+                bat 'node --version' 
+                bat 'npm --version' 
+                bat 'npm ci'
+            }
+        }
 
-stages{
+        stage('Install Playwright Browser'){ 
+            steps{ 
+                bat 'npx playwright install chromium' 
+            } 
+        }
 
+        stage("Run Playwright Tests"){
+            steps{
+                //sh "npx playwright test"
+                bat 'npx playwright test --project=chromium --workers=1'
+            }
+        }
+    }
 
-stage("Checkout Code"){
+//stage("Generate Report"){
+//steps{
 
-steps{
+post { 
+    always { 
+        archiveArtifacts( 
+            artifacts: 'playwright-report/**, test-results/**', 
+            allowEmptyArchive: true
+            )
 
-git "github-repository-url"
-
+            publishHTML(target:[
+                reportDir:"playwright-report",
+                reportFiles:"index.html",
+                reportName:"Playwright HTML Report"
+                keepAll: true, 
+                alwaysLinkToLastBuild: true, 
+                allowMissing: true
+            ])
+        }
+    }
 }
-
-}
-
-stage("Install Dependency"){
-
-steps{
-
-sh "npm install"
-
-}
-
-}
-
-
-
-stage("Run Playwright Tests"){
-
-steps{
-
-sh "npx playwright test"
-
-}
-
-}
-
-stage("Generate Report"){
-
-steps{
-
-publishHTML(
-
-target:[
-
-reportDir:
-"playwright-report",
-
-reportFiles:
-"index.html",
-
-reportName:
-"Playwright HTML Report"
-
-]
-
-)
-
-}
-
-}
-
-
-}
-
-}
-

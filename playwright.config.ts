@@ -26,10 +26,17 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL: "https://www.saucedemo.com",
-    headless: false,
+
+    headless: process.env.CI ? true : false, 
+    launchOptions: { 
+      slowMo: process.env.CI ? 0 : 1000, 
+    },
+
+    /*headless: false,
     launchOptions: {
       slowMo: 1000   //Delay browser actions by 1 second
-    },
+    },*/
+
     /* Base URL to use in actions like `await page.goto('')`. */
     // baseURL: 'http://localhost:3000',
     screenshot:"only-on-failure",
@@ -39,7 +46,7 @@ export default defineConfig({
   },
   
   reporter:[
-              ["html"]
+              ["html", { open: "never" }]
            ],
 
            
