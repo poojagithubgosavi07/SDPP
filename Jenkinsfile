@@ -43,16 +43,15 @@ post {
         archiveArtifacts( 
             artifacts: 'playwright-report/**, test-results/**', 
             allowEmptyArchive: true
-            )
+        )
 
-            publishHTML(target:[
-                reportDir:"playwright-report",
-                reportFiles:"index.html",
-                reportName:"Playwright HTML Report"
-                keepAll: true, 
-                alwaysLinkToLastBuild: true, 
-                allowMissing: true
-            ])
-        }
+        publishHTML(target:[
+            reportDir:"playwright-report",
+            reportFiles:"index.html",
+            reportName:"Playwright HTML Report"
+            keepAll: true, 
+            alwaysLinkToLastBuild: true, 
+            allowMissing: true
+        ])
     }
 }
